@@ -46,7 +46,6 @@ function bible_verses_in_footer() {
         echo "<p id='bible-verse'>" . esc_html($cached_verse) . "</p>";
     }
 }
-}
 
 add_action('admin_footer', 'bible_verses_in_footer');
 
