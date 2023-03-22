@@ -19,7 +19,17 @@ function bible_verses_in_footer() {
     $cached_verse = get_transient('bible_verse_of_the_day');
 
     if (false === $cached_verse) {
-        $url = "https://labs.bible.org/api/?passage=votd&type=json";
+        $language = get_bloginfo('language');
+        $supported_languages = array(
+            'en' => 'kjv',
+            'es' => 'rvr60'
+            // Add more supported languages and their corresponding Bible versions here
+        );
+
+        $lang_code = substr($language, 0, 2);
+        $version = isset($supported_languages[$lang_code]) ? $supported_languages[$lang_code] : 'kjv';
+        
+        $url = "https://labs.bible.org/api/?passage=votd&type=json&version={$version}";
         $request = new WP_Http;
         $response = $request->request($url);
 
@@ -35,6 +45,7 @@ function bible_verses_in_footer() {
     } else {
         echo "<p id='bible-verse'>" . esc_html($cached_verse) . "</p>";
     }
+}
 }
 
 add_action('admin_footer', 'bible_verses_in_footer');
