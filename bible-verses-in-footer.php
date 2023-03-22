@@ -20,23 +20,16 @@ function bible_verses_in_footer() {
 
     if (false === $cached_verse) {
         $language = get_bloginfo('language');
-        $supported_languages = array(
-            'en' => 'kjv',
-            'es' => 'rvr60'
-            // Add more supported languages and their corresponding Bible versions here
-        );
-
         $lang_code = substr($language, 0, 2);
-        $version = isset($supported_languages[$lang_code]) ? $supported_languages[$lang_code] : 'kjv';
-        
-        $url = "https://labs.bible.org/api/?passage=votd&type=json&version={$version}";
+
+        $url = "https://dailyverses.net/api/verse/?language={$lang_code}&type=json";
         $request = new WP_Http;
         $response = $request->request($url);
 
         if (!is_wp_error($response) && isset($response['body'])) {
             $verse_data = json_decode($response['body'], true);
             if (!empty($verse_data)) {
-                $verse = $verse_data[0]['bookname'] . " " . $verse_data[0]['chapter'] . ":" . $verse_data[0]['verse'] . " - " . $verse_data[0]['text'];
+                $verse = $verse_data['bible'] . " " . $verse_data['text'];
                 // Cache the verse for 24 hours (86400 seconds)
                 set_transient('bible_verse_of_the_day', $verse, 86400);
                 echo "<p id='bible-verse'>" . esc_html($verse) . "</p>";
